@@ -2,13 +2,18 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { CreateGroup } from './CreateGroup'
 import { render, screen } from '@testing-library/react'
+import { RecoilRoot } from 'recoil'
 
 const renderComponent = () => {
-  render(<CreateGroup />)
+  render(
+    <RecoilRoot>
+      <CreateGroup />
+    </RecoilRoot>
+  )
 
   const input = screen.getByPlaceholderText('2022 제주도 여행')
   const saveButton = screen.getByText('저장');
-  const errorMessage = screen.queryByText('그룹 이름을 입력해주세요.')
+  const errorMessage = screen.queryByText('그룹 이름을 입력해 주세요.')
 
   return {
     input,
@@ -27,7 +32,7 @@ describe('그룹 생성 페이지', () => {
     const { saveButton, errorMessage } = renderComponent();
 
     await userEvent.click(saveButton);
-    expect(errorMessage).not.toBeNull();
+    expect(errorMessage).toHaveAttribute('data-valid', 'false');
   })
   test('그룹 이름을 입력 후, "저장" 버튼을 클릭시, 저장 성공', async () => {
     const { input, saveButton, errorMessage } = renderComponent();
@@ -35,6 +40,6 @@ describe('그룹 생성 페이지', () => {
     await userEvent.type(input, '예시 그룹명')
     await userEvent.click(saveButton);
 
-    expect(errorMessage).toBeNull();
+    expect(errorMessage).toHaveAttribute('data-valid', 'true');
   })
 })
