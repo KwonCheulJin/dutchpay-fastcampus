@@ -4,6 +4,7 @@ const config = {
   verbose: true,
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  transformIgnorePatterns: ['/node_modules/(?!(react-bootstrap-tagsinput))'],
 };
 
 module.exports = config;
