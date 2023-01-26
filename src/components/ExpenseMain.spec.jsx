@@ -2,7 +2,7 @@
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { ExpenseMain } from './ExpenseMain';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { groupMembersState } from '../state/groupMembers';
 
@@ -80,6 +80,44 @@ describe('비용 정산 메인 페이지', () => {
       expect(descErrorMessage).toHaveAttribute('data-valid', 'true');
       expect(amountErrorMessage).toHaveAttribute('data-valid', 'true');
       expect(payerErrorMessage).toHaveAttribute('data-valid', 'true');
+    });
+  });
+
+  describe('비용 리스트 컴포넌트', () => {
+    test('비용 리스트 컴포넌트 렌더링 되는가', () => {
+      renderComponent();
+      const expenseListComponent = screen.getByTestId('expenseList');
+
+      expect(expenseListComponent).toBeInTheDocument();
+    });
+  });
+
+  describe('새로운 비용이 입력 되었을 때', () => {
+    const addNewExpense = async () => {
+      const { dateInput, descInput, amountInput, payerInput, addButton } = renderComponent();
+
+      await userEvent.type(dateInput, '2023-01-23');
+      await userEvent.type(descInput, '장보기');
+      await userEvent.type(amountInput, '30000');
+      await userEvent.selectOptions(payerInput, '영수');
+      await userEvent.click(addButton);
+    };
+    test('날짜, 내용, 결제자, 금액 데이터가 정산 리스트에 추가 된다', async () => {
+      await addNewExpense();
+
+      const expenseListComponent = screen.getByTestId('expenseList');
+
+      const dateValue = within(expenseListComponent).getByText('2023-01-23');
+      expect(dateValue).toBeInTheDocument();
+
+      const descValue = within(expenseListComponent).getByText('장보기');
+      expect(descValue).toBeInTheDocument();
+
+      const amountValue = within(expenseListComponent).getByText('30000 원');
+      expect(amountValue).toBeInTheDocument();
+
+      const payerValue = within(expenseListComponent).getByText('영수');
+      expect(payerValue).toBeInTheDocument();
     });
   });
 });

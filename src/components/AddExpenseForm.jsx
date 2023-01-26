@@ -18,7 +18,7 @@ export const AddExpenseForm = () => {
     ].join('-')
   );
   const [desc, setDesc] = useState('');
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState('');
   const [payer, setPayer] = useState(null);
   const [validated, setValidated] = useState(false);
 
@@ -43,11 +43,14 @@ export const AddExpenseForm = () => {
     event.preventDefault();
 
     if (checkFormValidity()) {
-      const newExpense = [date, desc, amount, payer];
+      const newExpense = { date, desc, amount, payer };
       setExpense(expense => [...expense, newExpense]);
     }
 
     setValidated(true);
+    setDesc('');
+    setAmount('');
+    setPayer('');
   };
 
   return (
@@ -96,7 +99,7 @@ export const AddExpenseForm = () => {
           >
             <StyledFormGroup>
               <Form.Control
-                type="number"
+                type="text"
                 isValid={isAmountValid}
                 isInvalid={!isAmountValid && validated}
                 placeholder="비용은 얼마였나요?"
@@ -129,6 +132,7 @@ export const AddExpenseForm = () => {
                 >
                   누가 결제 했나요?
                 </option>
+                <option value="영수">영수</option>
                 {members.map((member, index) => (
                   <option
                     key={`${member}${index}`}
